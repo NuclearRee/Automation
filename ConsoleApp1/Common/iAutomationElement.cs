@@ -97,7 +97,7 @@ namespace ConsoleApp1.Common
         }
 
         /// <summary>
-        /// 枚举root节点下所有的窗口名字
+        /// 枚举root节点下所有结点，并存放到chridList
         /// </summary>
         public void enumRoot()
         {
@@ -124,37 +124,31 @@ namespace ConsoleApp1.Common
         }
 
         /// <summary>
-        /// 在chridList中查找名为_name的对象
+        /// 根据UI节点名称查询当前UI节点的子节点集
         /// </summary>
-        /// <param name="_name"></param>
-        public AutomationElement FindByName(string _name)
+        /// <param name="_name">UI节点名</param>
+        /// <returns>返回相似的节点集合</returns>
+        public List<AutomationElement> FindByName(string _name)
         {
             
             var v = from d in chridList where d.Current.Name.StartsWith(_name)  select  d;
             if(v.Count()!=0)
-                node =v.First();
-            if(exeHandle==null)
-            {
-                exeHandle = node; 
-            }
-
-
+                return v as List<AutomationElement>;
+            return null;
+            
         }
         /// <summary>
-        /// 在chridList中查找类名为_classname的对象
+        /// 根据UI节点类名查询当前UI节点的子节点集
         /// </summary>
-        /// <param name="_classname"></param>
-        public void FindByClassName(string _classname)
+        /// <param name="_classname">UI节点类名</param>
+        /// <returns>返回相似的节点集合</returns>
+        public List<AutomationElement> FindByClassName(string _classname)
         {
 
             var v = from d in chridList where d.Current.ClassName.StartsWith(_classname) select d;
             if (v.Count() != 0)
-                node = v.First();
-            if (exeHandle == null)
-            {
-                exeHandle = node;
-            }
-
+                return v as List<AutomationElement> ;
+            return null;
 
         }
 
