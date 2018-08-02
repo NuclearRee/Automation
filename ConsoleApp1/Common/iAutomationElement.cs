@@ -79,8 +79,11 @@ namespace ConsoleApp1.Common
 
         //应用句柄
         AutomationElement exeHandle;
-        //节点句柄
+        //头节点
+        public AutomationElement head { get; set; }
+        //当前选择节点
         public AutomationElement node { get; set; }
+       
         //windows UI树的根
         private AutomationElement root = AutomationElement.RootElement;
         //Root节点子级集合      
@@ -103,24 +106,33 @@ namespace ConsoleApp1.Common
         {
             var elementList = root.FindAll(TreeScope.Children, PropertyCondition.TrueCondition);         
             foreach(AutomationElement item in elementList)
-            {   
-                if(item.Current.Name!=null&&item.Current.Name!="")
-                    chridList.Add(item);               
+            {
+                if (item.Current.Name != null && item.Current.Name != "")
+                {
+                    chridList.Add(item);
+                    //Console.WriteLine(item.Current.Name + "   " + Convert.ToString(item.Current.NativeWindowHandle, 16));
+                }
+                              
             }           
         }
 
         /// <summary>
-        /// 枚举node节点下的所有UI
+        /// 枚举节点下的所有UI
         /// </summary>
         /// <param name="_element">node节点</param>
         public void enumNode(AutomationElement _element)
         {
             var elementList = _element.FindAll(TreeScope.Children, PropertyCondition.TrueCondition);
             chridList.Clear();
-            foreach (AutomationElement item in elementList)
-            {              
-                chridList.Add(item);
-                Console.WriteLine(item.Current.ClassName+"   "+ Convert.ToString(item.Current.NativeWindowHandle,16));            }
+            if(elementList.Count > 1)
+            {
+                foreach (AutomationElement item in elementList)
+                {
+                    chridList.Add(item);
+                    Console.WriteLine(item.Current.ClassName + "   " + Convert.ToString(item.Current.NativeWindowHandle, 16));
+                }
+            }
+
         }
 
         /// <summary>
@@ -130,8 +142,7 @@ namespace ConsoleApp1.Common
         /// <returns>返回相似的节点集合</returns>
         public List<AutomationElement> FindByName(string _name)
         {
-            
-            var v = from d in chridList where d.Current.Name.StartsWith(_name)  select  d;
+            var v = chridList.FindAll(a => a.Current.Name.Contains(_name));
             if(v.Count()!=0)
                 return v as List<AutomationElement>;
             return null;
@@ -146,7 +157,7 @@ namespace ConsoleApp1.Common
         public List<AutomationElement> FindByClassName(string _classname)
         {
 
-            var v = from d in chridList where d.Current.ClassName.StartsWith(_classname) select d;
+            var v = chridList.FindAll(a => a.Current.Name.Contains(_classname));
             if (v.Count() != 0)
                 return v as List<AutomationElement> ;
             return null;
