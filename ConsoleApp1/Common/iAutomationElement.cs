@@ -120,20 +120,20 @@ namespace ConsoleApp1.Common
         /// 枚举节点下的所有UI
         /// </summary>
         /// <param name="_element">node节点</param>
-        public void enumNode(AutomationElement _element)
+        public List<AutomationElement> enumNode(AutomationElement _element)
         {
             var elementList = _element.FindAll(TreeScope.Children, PropertyCondition.TrueCondition);
-            chridList.Clear();
-            if(elementList.Count > 1)
+            List<AutomationElement> list = new List<AutomationElement>();
+            foreach (AutomationElement item in elementList)
             {
-                foreach (AutomationElement item in elementList)
-                {
-                    chridList.Add(item);
-                    Console.WriteLine(item.Current.ClassName + "   " + Convert.ToString(item.Current.NativeWindowHandle, 16));
-                }
+                list.Add(item);
             }
+            return list;
+          
 
         }
+
+        
 
         /// <summary>
         /// 根据UI节点名称查询当前UI节点的子节点集
