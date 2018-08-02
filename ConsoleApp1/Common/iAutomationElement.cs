@@ -137,6 +137,7 @@ namespace ConsoleApp1.Common
             return null;
             
         }
+
         /// <summary>
         /// 根据UI节点类名查询当前UI节点的子节点集
         /// </summary>
@@ -190,6 +191,8 @@ namespace ConsoleApp1.Common
            
             
         }
+
+
         /// <summary>
         /// 获取ViewList中的内容
         /// </summary>
@@ -248,6 +251,7 @@ namespace ConsoleApp1.Common
             }
 
         }
+
 
         /// <summary>
         /// 模拟点击
