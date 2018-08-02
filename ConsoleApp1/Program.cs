@@ -12,88 +12,71 @@ namespace ConsoleApp1
 {
     class Program
     {
-        //声明 API 函数
-        public const uint LVM_FIRST = 0x1000;
-        public const uint LVM_GETITEMCOUNT = LVM_FIRST + 4;
-        public const uint LVM_GETITEMW = LVM_FIRST + 75;
-
-        [DllImport("user32.DLL")]
-        public static extern int SendMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
-        [DllImport("user32.DLL")]
-        public static extern IntPtr FindWindow(string lpszClass, string lpszWindow);
-        [DllImport("user32.DLL")]
-        public static extern IntPtr FindWindowEx(IntPtr hwndParent,
-            IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
-        [DllImport("user32.dll")]
-        public static extern uint GetWindowThreadProcessId(IntPtr hWnd,
-            out uint dwProcessId);
-
-        public const uint PROCESS_VM_OPERATION = 0x0008;
-        public const uint PROCESS_VM_READ = 0x0010;
-        public const uint PROCESS_VM_WRITE = 0x0020;
-
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr OpenProcess(uint dwDesiredAccess,
-            bool bInheritHandle, uint dwProcessId);
-        public const uint MEM_COMMIT = 0x1000;
-        public const uint MEM_RELEASE = 0x8000;
-
-        public const uint MEM_RESERVE = 0x2000;
-        public const uint PAGE_READWRITE = 4;
-
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress,
-            uint dwSize, uint flAllocationType, uint flProtect);
-
-        [DllImport("kernel32.dll")]
-        public static extern bool VirtualFreeEx(IntPtr hProcess, IntPtr lpAddress,
-           uint dwSize, uint dwFreeType);
-
-        [DllImport("kernel32.dll")]
-        public static extern bool CloseHandle(IntPtr handle);
-
-        [DllImport("kernel32.dll")]
-        public static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress,
-           IntPtr lpBuffer, int nSize, ref uint vNumberOfBytesRead);
-
-        [DllImport("kernel32.dll")]
-        public static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress,
-           IntPtr lpBuffer, int nSize, ref uint vNumberOfBytesRead);
-
-        public struct LVITEM
-        {
-            public int mask;
-            public int iItem;
-            public int iSubItem;
-            public int state;
-            public int stateMask;
-            public IntPtr pszText; // string 
-            public int cchTextMax;
-            public int iImage;
-            public IntPtr lParam;
-            public int iIndent;
-            public int iGroupId;
-            public int cColumns;
-            public IntPtr puColumns;
-        }
-        public static int LVIF_TEXT = 0x0001;
+        static AutomationElement buyWindowsElement;
         static void Main(string[] args)
         {
+          
 
-            iAutomationElement uielement = new iAutomationElement();                        
-            uielement.enumRoot();
-            uielement.FindByName("安信安睿终端");
-           
+
+
+
         }
+
+       
 
         /// <summary>
-        /// 中投证券交易模块自动化Demo
+        /// 中投证券买入窗口Demo
         /// </summary>
         /// <param name="_elemet">模块元素节点</param>
-        static void ZTWindwosFindDemo(AutomationElement _elemet)
+        static void ZTbuyWindowsElementDemo()
         {
+            var uielement = new iAutomationElement();
+            var elementlist = uielement.enumRoot();
+            elementlist = uielement.FindByName("中投证券", elementlist);
+            elementlist = uielement.enumNode(elementlist[0]);
+            if (elementlist.Count > 1)
+            {
+                foreach (AutomationElement item in elementlist)
+                {
+                    var list = uielement.enumDescendants(item, "买入下单");
+                    if (list.Count > 0)
+                    {
+                        buyWindowsElement = TreeWalker.RawViewWalker.GetParent(list[0]);
+                        elementlist = uielement.enumNode(buyWindowsElement);
+                        elementlist = uielement.FindByClassName("AfxWnd42", elementlist);
+                        uielement.WriteTextBox(elementlist[0], "\b\b\b\b\b\b");
+                        uielement.WriteTextBox(elementlist[0], "000005");
+                    }
+                }
+            }
 
         }
+        /// <summary>
+        /// 中投证券卖出窗口Demo
+        /// </summary>
+        static void ZTsaleWindowsElementDemo()
+        {
+            var uielement = new iAutomationElement();
+            var elementlist = uielement.enumRoot();
+            elementlist = uielement.FindByName("中投证券", elementlist);
+            elementlist = uielement.enumNode(elementlist[0]);
+            if (elementlist.Count > 1)
+            {
+                foreach (AutomationElement item in elementlist)
+                {
+                    var list = uielement.enumDescendants(item, "卖出下单");
+                    if (list.Count > 0)
+                    {
+                        buyWindowsElement = TreeWalker.RawViewWalker.GetParent(list[0]);
+                        elementlist = uielement.enumNode(buyWindowsElement);
+                        elementlist = uielement.FindByClassName("AfxWnd42", elementlist);
+                        uielement.WriteTextBox(elementlist[0], "\b\b\b\b\b\b");
+                        uielement.WriteTextBox(elementlist[0], "000005");
+                    }
+                }
+            }
+        }
+
 
         /// <summary>
         /// 之前的测试代码垃圾桶
