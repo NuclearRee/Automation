@@ -102,18 +102,19 @@ namespace ConsoleApp1.Common
         /// <summary>
         /// 枚举root节点下所有结点，并存放到chridList
         /// </summary>
-        public void enumRoot()
+        public List<AutomationElement> enumRoot()
         {
-            var elementList = root.FindAll(TreeScope.Children, PropertyCondition.TrueCondition);         
-            foreach(AutomationElement item in elementList)
+            var elementList = root.FindAll(TreeScope.Children, PropertyCondition.TrueCondition);
+            List<AutomationElement> list = new List<AutomationElement>();
+            foreach (AutomationElement item in elementList)
             {
                 if (item.Current.Name != null && item.Current.Name != "")
                 {
-                    chridList.Add(item);
-                    //Console.WriteLine(item.Current.Name + "   " + Convert.ToString(item.Current.NativeWindowHandle, 16));
+                    list.Add(item);
                 }
                               
-            }           
+            }
+            return list;
         }
 
         /// <summary>
@@ -132,17 +133,44 @@ namespace ConsoleApp1.Common
           
 
         }
-
-        
+        /// <summary>
+        /// 获取UI元素的父级
+        /// </summary>
+        /// <param name="_element"></param>
+        /// <returns></returns>
+        public AutomationElement getFather(AutomationElement _element)
+        {
+            var element = _element.FindAll(TreeScope.Parent, PropertyCondition.TrueCondition);
+            return element[0];
+        }
 
         /// <summary>
-        /// 根据UI节点名称查询当前UI节点的子节点集
+        /// 根据名称获取_element节点(包括子代)下集合
         /// </summary>
-        /// <param name="_name">UI节点名</param>
-        /// <returns>返回相似的节点集合</returns>
-        public List<AutomationElement> FindByName(string _name)
+        /// <param name="_element">节点元素对象</param>
+        /// <param name="_name">查找名称</param>
+        /// <returns>获得的集合</returns>
+        public List<AutomationElement> enumDescendants(AutomationElement _element,string _name)
         {
-            var v = chridList.FindAll(a => a.Current.Name.Contains(_name));
+            var elementList = _element.FindAll(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty,_name));
+            List<AutomationElement> list = new List<AutomationElement>();
+            foreach (AutomationElement item in elementList)
+            {
+                list.Add(item);
+            }
+            return list;
+        }
+
+        /// <summary>
+        /// 在_childList集合中查找名称与_name相似的集合
+        /// </summary>
+        /// <param name="_name">UI节点元素名称</param>
+        /// <param name="_srcChildList">UI节点集</param>
+        /// <returns>返回相似的节点集合</returns>
+
+        public List<AutomationElement> FindByName(string _name,List<AutomationElement> _srcChildList)
+        {
+            var v = _srcChildList.FindAll(a => a.Current.Name.Contains(_name));
             if(v.Count()!=0)
                 return v as List<AutomationElement>;
             return null;
@@ -150,19 +178,22 @@ namespace ConsoleApp1.Common
         }
 
         /// <summary>
-        /// 根据UI节点类名查询当前UI节点的子节点集
+        /// 在_childList集合中查找名称与_classname相似的集合
         /// </summary>
-        /// <param name="_classname">UI节点类名</param>
-        /// <returns>返回相似的节点集合</returns>
-        public List<AutomationElement> FindByClassName(string _classname)
+        /// <param name="_classname">UI节点元素名称</param>
+        /// <param name="_srcChildList">UI节点集</param>
+        /// <returns></returns>
+        public List<AutomationElement> FindByClassName(string _classname, List<AutomationElement> _srcChildList)
         {
 
-            var v = chridList.FindAll(a => a.Current.Name.Contains(_classname));
+            var v = _srcChildList.FindAll(a => a.Current.ClassName.Contains(_classname));
             if (v.Count() != 0)
                 return v as List<AutomationElement> ;
             return null;
 
         }
+
+        
 
         /// <summary>
         /// 在root下通过UI元素名,类名搜素，返回一个AutomationElement对象
