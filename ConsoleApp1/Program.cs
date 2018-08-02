@@ -86,6 +86,18 @@ namespace ConsoleApp1
            
         }
 
+        /// <summary>
+        /// 中投证券交易模块自动化Demo
+        /// </summary>
+        /// <param name="_elemet">模块元素节点</param>
+        static void ZTWindwosFindDemo(AutomationElement _elemet)
+        {
+
+        }
+
+        /// <summary>
+        /// 之前的测试代码垃圾桶
+        /// </summary>
         static void zhushi()
         {
             //uielement.enumNode(uielement.node);
@@ -163,11 +175,6 @@ namespace ConsoleApp1
             ////{
             ////    Console.WriteLine(main[i].Current.ClassName +"    "+ Convert.ToString(main[i].Current.NativeWindowHandle, 16));
             ////}
-        }
-
-        private static void saleClick()
-        {
-
         }
 
         /// <summary>
