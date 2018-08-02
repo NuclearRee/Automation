@@ -83,6 +83,11 @@ namespace ConsoleApp1
             iAutomationElement uielement = new iAutomationElement();                        
             uielement.enumRoot();
             uielement.FindByName("安信安睿终端");
+           
+        }
+
+        static void zhushi()
+        {
             //uielement.enumNode(uielement.node);
             //uielement.FindByClassName("Afx:");
             //Console.WriteLine("--------------------------------------------");
@@ -159,7 +164,6 @@ namespace ConsoleApp1
             ////    Console.WriteLine(main[i].Current.ClassName +"    "+ Convert.ToString(main[i].Current.NativeWindowHandle, 16));
             ////}
         }
-
 
         private static void saleClick()
         {
