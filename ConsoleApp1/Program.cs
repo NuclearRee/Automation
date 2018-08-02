@@ -15,14 +15,34 @@ namespace ConsoleApp1
         static AutomationElement buyWindowsElement;
         static void Main(string[] args)
         {
-          
 
 
+           
 
 
         }
 
-       
+        static void ZTClickBuy()
+        {
+            var uielement = new iAutomationElement();
+            var elementlist = uielement.enumRoot();
+            elementlist = uielement.FindByName("中投证券", elementlist);
+            elementlist = uielement.enumNode(elementlist[0]);
+            if (elementlist.Count > 1)
+            {
+                foreach (AutomationElement item in elementlist)
+                {
+                    var list = uielement.enumDescendants(item, "锁定");
+                    if (list.Count > 0)
+                    {
+                        buyWindowsElement = TreeWalker.RawViewWalker.GetParent(list[0]);
+                        elementlist = uielement.enumNode(buyWindowsElement);
+                        elementlist = uielement.FindByName("买入", elementlist);
+                        uielement.InvokeButton(elementlist[0]);
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// 中投证券买入窗口Demo
