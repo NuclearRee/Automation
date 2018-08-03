@@ -299,7 +299,7 @@ namespace ConsoleApp1.Common
         /// 模拟点击
         /// </summary>
         /// <param name="e"></param>
-        public static void InvokeButton(AutomationElement _element)
+        public  void InvokeButton(AutomationElement _element)
         {
             InvokePattern invoke = (InvokePattern)_element.GetCurrentPattern(InvokePattern.Pattern);
             invoke.Invoke();
