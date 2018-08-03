@@ -43,10 +43,16 @@ namespace ConsoleApp1
 
 
             //1.读取预警列表数据        
-            ReadWaringListView();
+            ReadZTGetViewList();
+            foreach (var item in ZT_DataList)
 
-            
-            
+            {
+
+                Console.WriteLine(item.Key);
+
+            }
+
+
 
 
 
@@ -71,10 +77,32 @@ namespace ConsoleApp1
             DZH_DataList = uielement.GetViewList(elemlentlist[0],5);
            
         }
-
+        /// <summary>
+        /// 获取中投证券持仓单信息
+        /// </summary>
         static void ReadZTGetViewList()
         {
             var uielement = new iAutomationElement();
+            var elementlist = uielement.enumRoot();
+            elementlist = uielement.FindByName("中投证券", elementlist);
+            elementlist = uielement.enumNode(elementlist[0]);
+            if (elementlist.Count > 1)
+            {
+                foreach (AutomationElement item in elementlist)
+                {
+                    var list = uielement.enumDescendants(item, "买入下单");
+                    if (list.Count > 0)
+                    {
+                        buyWindowsElement = TreeWalker.RawViewWalker.GetParent(list[0]);
+                        elementlist = uielement.enumNode(buyWindowsElement);
+                        foreach (var count in elementlist)
+                            Console.WriteLine(count.Current.ClassName + " " + count.Current.Name);
+                        elementlist = uielement.FindByClassName("SysListView32", elementlist);
+                        ZT_DataList = uielement.GetViewList(elementlist[0], 19);
+
+                    }
+                }
+            }
         }
 
         
@@ -129,6 +157,15 @@ namespace ConsoleApp1
                     }
                 }
             }
+
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        static void ZTbuyWindowsGetViewList()
+        {
+           
+           
 
         }
         /// <summary>
