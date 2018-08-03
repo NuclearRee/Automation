@@ -12,16 +12,76 @@ namespace ConsoleApp1
 {
     class Program
     {
+        //大智慧预警数据
+        static Dictionary<string, DataItem> DZH_DataList = new Dictionary<string, DataItem>();
+        //大智慧预警数据DataListView AutomationElementObj
+        static AutomationElement DZH_uiElement;
+        //中投证券买入按钮 AutomationElementObj
+        static AutomationElement ZT_BuyButtonElement;
+        //中投证券买入下单 证券代码框 AutomationElementObj
+        static AutomationElement ZT_BuySecuritiesCode;
+        //中投证券买入 买入数量 AutomationElementObj
+        static AutomationElement ZT_BuyNum;
+        //中投证券买入 持仓单DataListView AutomationElementObj
+        static AutomationElement ZT_BuyListView;
+        //中投证券卖出按钮 AutomationElementObj
+        static AutomationElement ZT_SaleButtonElement;
+        //中投证券卖出下单 证券代码框 AutomationElementObj
+        static AutomationElement ZT_SaleSecuritiesCode;
+        //中投证券卖出 卖出数量 AutomationElementObj
+        static AutomationElement ZT_SaleNum;
+        //中投证券卖出 持仓单DataListView AutomationElementObj
+        static AutomationElement ZT_SaleListView;
+
+        //中投证券持仓单数据
+        static Dictionary<string, DataItem> ZT_DataList = new Dictionary<string, DataItem>();
+
         static AutomationElement buyWindowsElement;
         static void Main(string[] args)
         {
+            //读取需要的句柄以及UIElement
 
 
-           
+            //1.读取预警列表数据        
+            ReadWaringListView();
+
+            
+            
+
 
 
         }
 
+        /// <summary>
+        /// 大智慧预警表读取
+        /// </summary>
+        static void ReadWaringListView()
+        {
+            var uielement = new iAutomationElement();
+            var elemlentlist = uielement.enumRoot();
+            elemlentlist = uielement.FindByName("大智慧", elemlentlist);           
+            elemlentlist = uielement.enumNode(elemlentlist[0]);           
+            elemlentlist = uielement.FindByName("预警", elemlentlist);
+            foreach (AutomationElement item in elemlentlist)
+            {
+                Console.WriteLine(item.Current.Name + "" + item.Current.ClassName);
+            }
+            elemlentlist = uielement.enumNode(elemlentlist[0]);
+            elemlentlist = uielement.FindByName("List2", elemlentlist);
+            DZH_DataList = uielement.GetViewList(elemlentlist[0],5);
+           
+        }
+
+        static void ReadZTGetViewList()
+        {
+            var uielement = new iAutomationElement();
+        }
+
+        
+
+        /// <summary>
+        /// 中投证券买入点击
+        /// </summary>
         static void ZTClickBuy()
         {
             var uielement = new iAutomationElement();

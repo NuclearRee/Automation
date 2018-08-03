@@ -89,7 +89,7 @@ namespace ConsoleApp1.Common
         //Root节点子级集合      
         List<AutomationElement> chridList = new List<AutomationElement>();
         //数据列表
-        Dictionary<string,DataItem> DataList = new Dictionary<string,DataItem>();
+        public Dictionary<string,DataItem> DataList = new Dictionary<string,DataItem>();
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -239,7 +239,7 @@ namespace ConsoleApp1.Common
         /// 获取ViewList中的内容
         /// </summary>
         /// <param name="_element">AutomationElement对象</param>
-        public void GetViewList(AutomationElement _element,int _column)
+        public Dictionary<string, DataItem> GetViewList(AutomationElement _element,int _column)
         {
             //获取list表里的行数
             int count = (int)SendMessage((IntPtr)_element.Current.NativeWindowHandle, LVM_GETITEMCOUNT, 0, 0);
@@ -291,7 +291,7 @@ namespace ConsoleApp1.Common
                 }
                 
             }
-
+            return DataList;
         }
 
 
@@ -315,6 +315,8 @@ namespace ConsoleApp1.Common
             foreach(var item in arry) 
                 SendMessage((IntPtr)_element.Current.NativeWindowHandle, 0x0102, item, 0);
         }
+
+        
 
     }
         
