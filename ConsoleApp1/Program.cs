@@ -123,7 +123,7 @@ namespace ConsoleApp1
                     var list = uielement.enumDescendants(item, "卖出下单");
                     if (list.Count > 0)
                     {
-                        buyWindowsElement = TreeWalker.RawViewWalker.GetParent(list[0]);
+                        buyWindowsElement = TreeWalker.RawViewWalker.GetParent(list[0]);      
                         elementlist = uielement.enumNode(buyWindowsElement);
                         foreach (var count in elementlist)
                             Console.WriteLine(count.Current.ClassName + " " + count.Current.Name);
@@ -155,6 +155,7 @@ namespace ConsoleApp1
                         buyWindowsElement = TreeWalker.RawViewWalker.GetParent(list[0]);
                         elementlist = uielement.enumNode(buyWindowsElement);
                         elementlist = uielement.FindByName("买入", elementlist);
+                        ZT_BuyButtonElement = elementlist[0];
                         uielement.InvokeButton(elementlist[0]);
                     }
                 }
@@ -181,6 +182,7 @@ namespace ConsoleApp1
                         buyWindowsElement = TreeWalker.RawViewWalker.GetParent(list[0]);
                         elementlist = uielement.enumNode(buyWindowsElement);
                         elementlist = uielement.FindByClassName("AfxWnd42", elementlist);
+                        ZT_BuyNum = elementlist[0];
                         uielement.WriteTextBox(elementlist[0], "\b\b\b\b\b\b");
                         uielement.WriteTextBox(elementlist[0], "000005");
                     }
@@ -216,6 +218,7 @@ namespace ConsoleApp1
                         buyWindowsElement = TreeWalker.RawViewWalker.GetParent(list[0]);
                         elementlist = uielement.enumNode(buyWindowsElement);
                         elementlist = uielement.FindByClassName("AfxWnd42", elementlist);
+                        ZT_SaleNum = elementlist[0];
                         uielement.WriteTextBox(elementlist[0], "\b\b\b\b\b\b");
                         uielement.WriteTextBox(elementlist[0], "000005");
                     }
