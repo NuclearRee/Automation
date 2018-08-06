@@ -43,12 +43,12 @@ namespace ConsoleApp1
 
 
             //1.读取预警列表数据        
-            ReadZTGetViewList();
-            foreach (var item in ZT_DataList)
+            ReadWaringListView();
+            foreach (var item in DZH_DataList)
 
             {
 
-                Console.WriteLine(item.Key);
+                Console.WriteLine(item.Value.data[0]);
 
             }
 
@@ -74,13 +74,14 @@ namespace ConsoleApp1
             }
             elemlentlist = uielement.enumNode(elemlentlist[0]);
             elemlentlist = uielement.FindByName("List2", elemlentlist);
+            DZH_uiElement = elemlentlist[0];
             DZH_DataList = uielement.GetViewList(elemlentlist[0],5);
            
         }
         /// <summary>
         /// 获取中投证券持仓单信息
         /// </summary>
-        static void ReadZTGetViewList()
+        static void ReadZTGetBuyViewList()
         {
             var uielement = new iAutomationElement();
             var elementlist = uielement.enumRoot();
@@ -98,6 +99,7 @@ namespace ConsoleApp1
                         foreach (var count in elementlist)
                             Console.WriteLine(count.Current.ClassName + " " + count.Current.Name);
                         elementlist = uielement.FindByClassName("SysListView32", elementlist);
+                        ZT_BuyListView = elementlist[0];
                         ZT_DataList = uielement.GetViewList(elementlist[0], 19);
 
                     }
@@ -105,7 +107,34 @@ namespace ConsoleApp1
             }
         }
 
-        
+        /// <summary>
+        /// 获取中投证券持仓单信息
+        /// </summary>
+        static void ReadZTGetSaleViewList()
+        {
+            var uielement = new iAutomationElement();
+            var elementlist = uielement.enumRoot();
+            elementlist = uielement.FindByName("中投证券", elementlist);
+            elementlist = uielement.enumNode(elementlist[0]);
+            if (elementlist.Count > 1)
+            {
+                foreach (AutomationElement item in elementlist)
+                {
+                    var list = uielement.enumDescendants(item, "卖出下单");
+                    if (list.Count > 0)
+                    {
+                        buyWindowsElement = TreeWalker.RawViewWalker.GetParent(list[0]);
+                        elementlist = uielement.enumNode(buyWindowsElement);
+                        foreach (var count in elementlist)
+                            Console.WriteLine(count.Current.ClassName + " " + count.Current.Name);
+                        elementlist = uielement.FindByClassName("SysListView32", elementlist);
+                        ZT_SaleListView = elementlist[0];
+                        ZT_DataList = uielement.GetViewList(elementlist[0], 19);
+
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// 中投证券买入点击
