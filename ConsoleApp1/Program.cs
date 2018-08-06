@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Automation;
 using ConsoleApp1.Common;
 using ConsoleApp1.DataModel;
+using System.Threading;
 
 namespace ConsoleApp1
 {
@@ -24,6 +25,10 @@ namespace ConsoleApp1
         static AutomationElement ZT_BuyNum;
         //中投证券买入 持仓单DataListView AutomationElementObj
         static AutomationElement ZT_BuyListView;
+        //中投证券买入下单按钮 AutomationElementObj
+        static AutomationElement ZT_BuyOrder;
+        //中投证券买入确认 AutomationElementObj
+        static AutomationElement ZT_BuyConfirm;
 
         //中投证券卖出按钮 AutomationElementObj
         static AutomationElement ZT_SaleButtonElement;
@@ -33,6 +38,10 @@ namespace ConsoleApp1
         static AutomationElement ZT_SaleNum;
         //中投证券卖出 持仓单DataListView AutomationElementObj
         static AutomationElement ZT_SaleListView;
+        //中投证券卖出下单按钮 AutomationElementObj
+        static AutomationElement ZT_SaleOrder;
+        //中投证券卖出确认 AutomationElementObj
+        static AutomationElement ZT_SaleConfirm;
 
         //中投证券持仓单数据
         static Dictionary<string, DataItem> ZT_DataList = new Dictionary<string, DataItem>();
@@ -42,10 +51,61 @@ namespace ConsoleApp1
         {
 
 
-
+            //对象初始化
             initialization();
+            //ReadWarmingOrder()
+            SaleOrder("600428", "100");
 
 
+        }
+
+        static  void ReadWarmingOrder()
+        {
+            while (true)
+            {
+                DZH_DataList.Clear();
+                var data = new iAutomationElement();
+                DZH_DataList = data.GetViewList(DZH_uiElement, 5);
+                foreach(var item in DZH_DataList)
+                {
+                    
+                }
+            }
+
+        }
+        /// <summary>
+        /// 股票买入
+        /// </summary>
+        /// <param name="_securitiesCode">证券代码</param>
+        /// <param name="_num">数量</param>
+        static void BuyOrder(string _securitiesCode,string _num)
+        {
+            var orderClick = new iAutomationElement();
+            orderClick.InvokeButton(ZT_BuyButtonElement);
+            orderClick.WriteTextBox(ZT_BuySecuritiesCode, "\b\b\b\b\b\b");
+            orderClick.WriteTextBox(ZT_BuySecuritiesCode, _securitiesCode);
+            orderClick.WriteTextBox(ZT_BuyNum, "\b\b\b\b\b\b");
+            orderClick.WriteTextBox(ZT_BuyNum, _num);
+            orderClick.InvokeButton(ZT_BuyOrder);
+            if (ZT_BuyConfirm == null)
+                GetConfirm("买入确认");
+        }
+        /// <summary>
+        /// 股票卖出
+        /// </summary>
+        /// <param name="_securitiesCode">证券代码</param>
+        /// <param name="_num">数量</param>
+        static void SaleOrder(string _securitiesCode, string _num)
+        {
+            var orderClick = new iAutomationElement();
+            orderClick.InvokeButton(ZT_SaleButtonElement);
+            orderClick.WriteTextBox(ZT_SaleSecuritiesCode, "\b\b\b\b\b\b");
+            orderClick.WriteTextBox(ZT_SaleSecuritiesCode, _securitiesCode);
+            orderClick.WriteTextBox(ZT_SaleNum, "\b\b\b\b\b\b");
+            orderClick.WriteTextBox(ZT_SaleNum, _num);
+            orderClick.InvokeButton(ZT_SaleOrder);
+            if(ZT_SaleConfirm==null)
+                GetConfirm("卖出确认");
         }
 
         /// <summary>
@@ -72,6 +132,8 @@ namespace ConsoleApp1
             click.WriteTextBox(ZT_BuySecuritiesCode, "000001");
             //获取NumBoxUIElement
             GetNumboxElement("买入下单");
+            //获取ZT_BuyOrderUIElement
+            GetZTOrder("买入下单");
             //5.获取卖出界面UIElement           
             //点击买入按钮
             click.InvokeButton(ZT_SaleButtonElement);
@@ -83,7 +145,38 @@ namespace ConsoleApp1
             click.WriteTextBox(ZT_SaleSecuritiesCode, "000001");
             //获取NumBoxUIElement
             GetNumboxElement("卖出下单");
+            //获取ZT_SaleOrderUIElement
+            GetZTOrder("卖出下单");
+        }
 
+        /// <summary>
+        /// 获取确认交易按钮 UIElement
+        /// </summary>
+        /// <param name="_type">"买入确认" or "卖出确认"</param>
+        static void GetConfirm(string _type)
+        {
+            var uielement = new iAutomationElement();
+            var elementlist = uielement.enumRoot();
+            elementlist = uielement.FindByName("中投证券", elementlist);
+            elementlist = uielement.enumNode(elementlist[0]);
+            if (elementlist.Count > 1)
+            {
+                foreach (AutomationElement item in elementlist)
+                {
+                    var list = uielement.enumDescendants(item, _type);
+                    if (list.Count > 0)
+                    {
+                        if(_type == "买入确认")
+                        {
+                            ZT_BuyConfirm = list[0];
+                        }
+                        else if(_type =="卖出确认")
+                        {
+                            ZT_SaleConfirm = list[0];
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -261,7 +354,38 @@ namespace ConsoleApp1
 
         }
        
-       
+       /// <summary>
+       /// 获取下单按钮的UIELement
+       /// </summary>
+       /// <param name="_type">"买入下单" or "卖出下单"</param>
+        static void GetZTOrder(string _type)
+        {
+            var uielement = new iAutomationElement();
+            var elementlist = uielement.enumRoot();
+            elementlist = uielement.FindByName("中投证券", elementlist);
+            elementlist = uielement.enumNode(elementlist[0]);
+            if (elementlist.Count > 1)
+            {
+                foreach (AutomationElement item in elementlist)
+                {
+                    var list = uielement.enumDescendants(item, _type);
+                    if (list.Count > 0)
+                    {
+                   
+                        if (_type == "买入下单")
+                        {
+                             ZT_BuyOrder = list[0];
+                        }
+                        else if (_type == "卖出下单")
+                        {
+                             ZT_SaleOrder = list[0];
+                        }
+                        //uielement.WriteTextBox(elementlist[0], "\b\b\b\b\b\b");
+                        //uielement.WriteTextBox(elementlist[0], "000005");
+                    }
+                }
+            }
+        }
 
 
         /// <summary>
