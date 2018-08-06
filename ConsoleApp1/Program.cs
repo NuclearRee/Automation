@@ -24,6 +24,7 @@ namespace ConsoleApp1
         static AutomationElement ZT_BuyNum;
         //中投证券买入 持仓单DataListView AutomationElementObj
         static AutomationElement ZT_BuyListView;
+
         //中投证券卖出按钮 AutomationElementObj
         static AutomationElement ZT_SaleButtonElement;
         //中投证券卖出下单 证券代码框 AutomationElementObj
@@ -39,49 +40,79 @@ namespace ConsoleApp1
         static AutomationElement buyWindowsElement;
         static void Main(string[] args)
         {
+
+
+
+            initialization();
+
+
+        }
+
+        /// <summary>
+        /// 基础数据初始化
+        /// </summary>
+        static void initialization()
+        {
             //读取需要的句柄以及UIElement
-
-
-            //1.读取预警列表数据        
-            ReadWaringListView();
-            foreach (var item in DZH_DataList)
-
-            {
-
-                Console.WriteLine(item.Value.data[0]);
-
-            }
-
-
-
-
+            //1.读取预警列表UIElement     DZH_uiElement  
+            GetReadWaringListViewElement();
+            //2.买入按钮UIElement
+            GetZT_OrderButtonElement("买入");
+            //3.卖出按钮UIElement
+            GetZT_OrderButtonElement("卖出");
+            //4.获取买入界面UIElement
+            var click = new iAutomationElement();
+            //点击买入按钮
+            click.InvokeButton(ZT_BuyButtonElement);
+            //获取持仓单UIElement
+            GetZTViewListElement("买入下单");
+            //获取买入界面证券代码TextBox UIElement
+            GetZTSecodeElement("买入下单");
+            //输入证券代码
+            click.WriteTextBox(ZT_BuySecuritiesCode, "000001");
+            //获取NumBoxUIElement
+            GetNumboxElement("买入下单");
+            //5.获取卖出界面UIElement           
+            //点击买入按钮
+            click.InvokeButton(ZT_SaleButtonElement);
+            //获取持仓单UIElement
+            GetZTViewListElement("卖出下单");
+            //获取买入界面证券代码TextBox UIElement
+            GetZTSecodeElement("卖出下单");
+            //输入证券代码
+            click.WriteTextBox(ZT_SaleSecuritiesCode, "000001");
+            //获取NumBoxUIElement
+            GetNumboxElement("卖出下单");
 
         }
 
         /// <summary>
         /// 大智慧预警表读取
         /// </summary>
-        static void ReadWaringListView()
+        static void GetReadWaringListViewElement()
         {
             var uielement = new iAutomationElement();
             var elemlentlist = uielement.enumRoot();
             elemlentlist = uielement.FindByName("大智慧", elemlentlist);           
             elemlentlist = uielement.enumNode(elemlentlist[0]);           
             elemlentlist = uielement.FindByName("预警", elemlentlist);
-            foreach (AutomationElement item in elemlentlist)
-            {
-                Console.WriteLine(item.Current.Name + "" + item.Current.ClassName);
-            }
+            //foreach (AutomationElement item in elemlentlist)
+            //{
+            //    Console.WriteLine(item.Current.Name + "" + item.Current.ClassName);
+            //}
             elemlentlist = uielement.enumNode(elemlentlist[0]);
             elemlentlist = uielement.FindByName("List2", elemlentlist);
             DZH_uiElement = elemlentlist[0];
             DZH_DataList = uielement.GetViewList(elemlentlist[0],5);
            
         }
+
         /// <summary>
-        /// 获取中投证券持仓单信息
+        /// 获取持仓单UIElement
+        /// 调用前需要点击买入or卖出按钮切换界面
         /// </summary>
-        static void ReadZTGetBuyViewList()
+        /// <param name="_type"  >"买入下单"or "卖出下单"</param>
+        static void GetZTViewListElement(string _type)
         {
             var uielement = new iAutomationElement();
             var elementlist = uielement.enumRoot();
@@ -91,7 +122,7 @@ namespace ConsoleApp1
             {
                 foreach (AutomationElement item in elementlist)
                 {
-                    var list = uielement.enumDescendants(item, "买入下单");
+                    var list = uielement.enumDescendants(item, _type);
                     if (list.Count > 0)
                     {
                         buyWindowsElement = TreeWalker.RawViewWalker.GetParent(list[0]);
@@ -99,7 +130,15 @@ namespace ConsoleApp1
                         foreach (var count in elementlist)
                             Console.WriteLine(count.Current.ClassName + " " + count.Current.Name);
                         elementlist = uielement.FindByClassName("SysListView32", elementlist);
-                        ZT_BuyListView = elementlist[0];
+                        if(_type == "买入下单")
+                        {
+                            ZT_BuyListView = elementlist[0];
+                        }
+                        else if(_type == "卖出下单")
+                        {
+                            ZT_SaleListView = elementlist[0];
+                        }
+                        
                         ZT_DataList = uielement.GetViewList(elementlist[0], 19);
 
                     }
@@ -107,39 +146,13 @@ namespace ConsoleApp1
             }
         }
 
-        /// <summary>
-        /// 获取中投证券持仓单信息
-        /// </summary>
-        static void ReadZTGetSaleViewList()
-        {
-            var uielement = new iAutomationElement();
-            var elementlist = uielement.enumRoot();
-            elementlist = uielement.FindByName("中投证券", elementlist);
-            elementlist = uielement.enumNode(elementlist[0]);
-            if (elementlist.Count > 1)
-            {
-                foreach (AutomationElement item in elementlist)
-                {
-                    var list = uielement.enumDescendants(item, "卖出下单");
-                    if (list.Count > 0)
-                    {
-                        buyWindowsElement = TreeWalker.RawViewWalker.GetParent(list[0]);      
-                        elementlist = uielement.enumNode(buyWindowsElement);
-                        foreach (var count in elementlist)
-                            Console.WriteLine(count.Current.ClassName + " " + count.Current.Name);
-                        elementlist = uielement.FindByClassName("SysListView32", elementlist);
-                        ZT_SaleListView = elementlist[0];
-                        ZT_DataList = uielement.GetViewList(elementlist[0], 19);
-
-                    }
-                }
-            }
-        }
+       
 
         /// <summary>
-        /// 中投证券买入点击
+        /// 中投证券买入or点击
         /// </summary>
-        static void ZTClickBuy()
+        /// <param name="_type">"买入"or"卖出"</param>
+        static void GetZT_OrderButtonElement(string _type)
         {
             var uielement = new iAutomationElement();
             var elementlist = uielement.enumRoot();
@@ -154,19 +167,27 @@ namespace ConsoleApp1
                     {
                         buyWindowsElement = TreeWalker.RawViewWalker.GetParent(list[0]);
                         elementlist = uielement.enumNode(buyWindowsElement);
-                        elementlist = uielement.FindByName("买入", elementlist);
-                        ZT_BuyButtonElement = elementlist[0];
-                        uielement.InvokeButton(elementlist[0]);
+                        elementlist = uielement.FindByName(_type, elementlist);
+                        if(_type == "买入")
+                        {
+                            ZT_BuyButtonElement = elementlist[0];
+                        }
+                        else  if(_type == "卖出")
+                        {
+                            ZT_SaleButtonElement = elementlist[0];
+                        }
+                        
+                        //uielement.InvokeButton(elementlist[0]);
                     }
                 }
             }
         }
-
+       
         /// <summary>
-        /// 中投证券买入窗口Demo
+        /// 获取NumBox的UIElement
         /// </summary>
-        /// <param name="_elemet">模块元素节点</param>
-        static void ZTbuyWindowsElementDemo()
+        /// <param name="_type">"买入下单" or "卖出下单"</param>
+        static void  GetNumboxElement(string _type)
         {
             var uielement = new iAutomationElement();
             var elementlist = uielement.enumRoot();
@@ -176,33 +197,39 @@ namespace ConsoleApp1
             {
                 foreach (AutomationElement item in elementlist)
                 {
-                    var list = uielement.enumDescendants(item, "买入下单");
+                    var list = uielement.enumDescendants(item, _type);
                     if (list.Count > 0)
                     {
                         buyWindowsElement = TreeWalker.RawViewWalker.GetParent(list[0]);
                         elementlist = uielement.enumNode(buyWindowsElement);
-                        elementlist = uielement.FindByClassName("AfxWnd42", elementlist);
-                        ZT_BuyNum = elementlist[0];
-                        uielement.WriteTextBox(elementlist[0], "\b\b\b\b\b\b");
-                        uielement.WriteTextBox(elementlist[0], "000005");
+                        elementlist = uielement.FindByClassName("Edit", elementlist);
+                        foreach(var i in elementlist)
+                        {
+                            if(i.Current.Name.ToString() ==""||i.Current.Name.ToString() == string.Empty)
+                            {
+                                if (_type == "买入下单")
+                                {
+                                    ZT_BuyNum = i;
+                                }
+                                else if (_type == "卖出下单")
+                                {
+                                    ZT_SaleNum = i;
+                                }
+                            }
+                        }
+                        
+                        //uielement.WriteTextBox(elementlist[0], "\b\b\b\b\b\b");
+                        //uielement.WriteTextBox(elementlist[0], "000005");
                     }
                 }
             }
-
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        static void ZTbuyWindowsGetViewList()
-        {
-           
-           
 
-        }
         /// <summary>
-        /// 中投证券卖出窗口Demo
+        /// 获取证券代码TextBoxUIElement
         /// </summary>
-        static void ZTsaleWindowsElementDemo()
+        /// <param name="_type">"买入下单" or "卖出下单"</param>
+        static void GetZTSecodeElement(string _type)
         {
             var uielement = new iAutomationElement();
             var elementlist = uielement.enumRoot();
@@ -212,19 +239,29 @@ namespace ConsoleApp1
             {
                 foreach (AutomationElement item in elementlist)
                 {
-                    var list = uielement.enumDescendants(item, "卖出下单");
+                    var list = uielement.enumDescendants(item, _type);
                     if (list.Count > 0)
                     {
                         buyWindowsElement = TreeWalker.RawViewWalker.GetParent(list[0]);
                         elementlist = uielement.enumNode(buyWindowsElement);
                         elementlist = uielement.FindByClassName("AfxWnd42", elementlist);
-                        ZT_SaleNum = elementlist[0];
-                        uielement.WriteTextBox(elementlist[0], "\b\b\b\b\b\b");
-                        uielement.WriteTextBox(elementlist[0], "000005");
+                        if(_type == "买入下单")
+                        {
+                            ZT_BuySecuritiesCode = elementlist[0];
+                        }
+                        else  if(_type == "卖出下单")
+                        {
+                            ZT_SaleSecuritiesCode = elementlist[0];
+                        }
+                        //uielement.WriteTextBox(elementlist[0], "\b\b\b\b\b\b");
+                        //uielement.WriteTextBox(elementlist[0], "000005");
                     }
                 }
             }
+
         }
+       
+       
 
 
         /// <summary>
@@ -309,36 +346,7 @@ namespace ConsoleApp1
             ////}
         }
 
-        /// <summary>
-        /// /模拟点击
-        /// </summary>
-        /// <param name="e"></param>
-        private static void InvokeButton(AutomationElement e)
-        {
-            InvokePattern invoke = (InvokePattern)e.GetCurrentPattern(InvokePattern.Pattern);
-            invoke.Invoke();
-        }
-        public static string Character(int asc)
-        {
-            //asc = asc + 65536;
-            Encoding asciiEncoding = Encoding.GetEncoding("GB18030");
-            Byte[] chrByte = BitConverter.GetBytes((short)asc);
-            string strCharacter = string.Empty;
-            if (asc < 0 || asc > 255)
-            {
-                Byte[] chrByteStr = new byte[2];
-                chrByteStr[0] = chrByte[1];
-                chrByteStr[1] = chrByte[0];
-                strCharacter = asciiEncoding.GetString(chrByteStr);
-            }
-            else
-            {
-                Byte[] chrByteStr = new byte[1];
-                chrByteStr[0] = chrByte[0];
-                strCharacter = asciiEncoding.GetString(chrByteStr);
-            }
-            return (strCharacter);
-        }
+      
     }
 
     
