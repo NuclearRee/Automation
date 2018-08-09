@@ -52,12 +52,14 @@ namespace ConsoleApp1
 
 
             //对象初始化
-            initialization();
-            //ReadWarmingOrder()
-            SaleOrder("600428", "100");
-
+            //initialization();
+           
+            //SaleOrder("600428", "100");
+            //f("买入下单");
 
         }
+
+
 
         static  void ReadWarmingOrder()
         {
@@ -72,6 +74,23 @@ namespace ConsoleApp1
                 }
             }
 
+        }
+        /// <summary>
+        /// 获取实时股票数据(仅限深A)
+        /// </summary>
+        /// <param name="_stockCode">股票代码</param>
+        /// <returns></returns>
+        static string[] getSotckData(string _stockCode)
+        {
+            //ReadWarmingOrder()
+            HttpClientTool post = HttpClientTool.GetInstance();
+            var list = new Dictionary<string, string>();
+            var data = post.doPost("http://hq.sinajs.cn/list=sz" + _stockCode, list);
+            data = data.Substring(data.IndexOf("\""));
+            data = data.Replace("\"", "");
+            data = data.Replace(";", "");
+            var datalist = data.Split(',');
+            return datalist;
         }
         /// <summary>
         /// 股票买入
@@ -99,10 +118,13 @@ namespace ConsoleApp1
         {
             var orderClick = new iAutomationElement();
             orderClick.InvokeButton(ZT_SaleButtonElement);
+            Thread.Sleep(500);
             orderClick.WriteTextBox(ZT_SaleSecuritiesCode, "\b\b\b\b\b\b");
             orderClick.WriteTextBox(ZT_SaleSecuritiesCode, _securitiesCode);
+            Thread.Sleep(500);
             orderClick.WriteTextBox(ZT_SaleNum, "\b\b\b\b\b\b");
             orderClick.WriteTextBox(ZT_SaleNum, _num);
+            Thread.Sleep(500);
             orderClick.InvokeButton(ZT_SaleOrder);
             if(ZT_SaleConfirm==null)
                 GetConfirm("卖出确认");
@@ -220,8 +242,8 @@ namespace ConsoleApp1
                     {
                         buyWindowsElement = TreeWalker.RawViewWalker.GetParent(list[0]);
                         elementlist = uielement.enumNode(buyWindowsElement);
-                        foreach (var count in elementlist)
-                            Console.WriteLine(count.Current.ClassName + " " + count.Current.Name);
+                        //foreach (var count in elementlist)
+                        //    Console.WriteLine(count.Current.ClassName + " " + count.Current.Name);
                         elementlist = uielement.FindByClassName("SysListView32", elementlist);
                         if(_type == "买入下单")
                         {
@@ -316,6 +338,34 @@ namespace ConsoleApp1
                     }
                 }
             }
+        }
+
+        static void f(string _type)
+        {
+            var uielement = new iAutomationElement();
+            var elementlist = uielement.enumRoot();
+            elementlist = uielement.FindByName("中投证券", elementlist);
+            elementlist = uielement.enumNode(elementlist[0]);
+            foreach (var i in elementlist)
+            {
+                Console.WriteLine(i.Current.ClassName + "  " + i.Current.Name);
+            }
+            //if (elementlist.Count > 1)
+            //{
+            //    foreach (AutomationElement item in elementlist)
+            //    {
+            //        var list = uielement.enumDescendants(item, _type);
+            //        if (list.Count > 0)
+            //        {
+            //            buyWindowsElement = TreeWalker.RawViewWalker.GetParent(list[0]);
+            //            buyWindowsElement = TreeWalker.RawViewWalker.GetParent(buyWindowsElement);
+            //            elementlist = uielement.enumNode(buyWindowsElement);
+                        
+                        
+                      
+            //        }
+            //    }
+            //}   
         }
 
         /// <summary>
