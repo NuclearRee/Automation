@@ -13,7 +13,7 @@ namespace ConsoleApp1.Common
         /// <param name="_datalist">对应股票数据</param>
         /// <param name="_canBuyNum">可买数量</param>
         /// <returns></returns>
-        static int GetBuyNum(string [] _dataList,int _canBuyNum)
+        public static int GetBuyNum(string [] _dataList,int _canBuyNum)
         {
             //盘口数量 = 卖1量 + 卖2量 + 卖3量
             int HandicapNum = (Convert.ToInt32(_dataList[20]) + Convert.ToInt32(_dataList[22]) + Convert.ToInt32(_dataList[24])) / 100;
