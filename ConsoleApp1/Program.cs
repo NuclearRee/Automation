@@ -29,7 +29,8 @@ namespace ConsoleApp1
         static AutomationElement ZT_BuyOrder;
         //中投证券买入确认 AutomationElementObj
         static AutomationElement ZT_BuyConfirm;
-
+        //中投证券可用资金 AutomationElementObj
+        static AutomationElement ZT_CanUseMoney;
         //中投证券卖出按钮 AutomationElementObj
         static AutomationElement ZT_SaleButtonElement;
         //中投证券卖出下单 证券代码框 AutomationElementObj
@@ -53,7 +54,9 @@ namespace ConsoleApp1
 
             //对象初始化
             //initialization();
-           
+            GetCanUseMoney();
+            //var datalists = getSotckData("000005");
+            //NumCalculation.GetBuyNum(datalists,);
             //SaleOrder("600428", "100");
             //f("买入下单");
 
@@ -137,7 +140,7 @@ namespace ConsoleApp1
         {
             //读取需要的句柄以及UIElement
             //1.读取预警列表UIElement     DZH_uiElement  
-            GetReadWaringListViewElement();
+           // GetReadWaringListViewElement();
             //2.买入按钮UIElement
             GetZT_OrderButtonElement("买入");
             //3.卖出按钮UIElement
@@ -366,6 +369,32 @@ namespace ConsoleApp1
             //        }
             //    }
             //}   
+        }
+
+        /// <summary>
+        /// 获取当前可用资金
+        /// </summary>
+        static void GetCanUseMoney()
+        {
+            var uielement = new iAutomationElement();
+            var elementlist = uielement.enumRoot();
+            elementlist = uielement.FindByName("中投证券", elementlist);
+            elementlist = uielement.enumNode(elementlist[0]);
+            if (elementlist.Count > 1)
+            {
+                foreach (AutomationElement item in elementlist)
+                {
+                    var list = uielement.enumDescendants(item, "买入下单");
+                    if (list.Count > 0)
+                    {
+                        buyWindowsElement = TreeWalker.RawViewWalker.GetParent(list[0]);
+                        elementlist = uielement.enumNode(buyWindowsElement);
+                        elementlist = uielement.FindByClassName("Static", elementlist);                      
+                        ZT_CanUseMoney = elementlist[7];
+                       
+                    }
+                }
+            }
         }
 
         /// <summary>
